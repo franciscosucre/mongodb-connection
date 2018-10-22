@@ -1,6 +1,5 @@
 const {
     MongoClient,
-    MongoError
 } = require('mongodb'),
     assert = require('assert');
 
@@ -28,13 +27,22 @@ class MongoDbConnection {
      * @memberof MongoLeroyDriver
      */
     constructor(servers, databaseName, options) {
+        assert(servers != null, `The Uri or the servers are required`);
+        assert(typeof databaseName === 'string', `The database name is required and must be a string`);
+        assert(databaseName.trim() != '', `The database name cannot be an empty string`);
         if (typeof servers === 'string') {
+            if (!(servers.startsWith('mongodb://') || servers.startsWith('mongodb+srv://'))){
+                servers = 'mongodb://' + servers;
+            }
             this.url = servers;
         } else {
             this.url = servers.reduce((previous, current, index, array) => {
-                const host = current.host != null && current.host.trim() != '' ? current.host : 'localhost';
-                const port = current.port || 27017;
-                assert(!isNaN(port), new MongoError(`The given port is not a number. Port:'${port}'`));
+                assert(current.host != null, `The host is required for earch server object`);
+                const host = current.host;
+                assert(typeof current.host === 'string', `The given host is not a string. Host:'${current.host}'`);
+                assert(current.port != null, `The port is required for earch server object`);
+                const port = current.port;
+                assert(typeof current.port === 'number', `The given port is not a number. Port:'${port}'`);
                 previous += `${host}:${port}`;
                 if (index < array.length - 1) {
                     previous += ','
@@ -42,12 +50,11 @@ class MongoDbConnection {
                 return previous;
             }, 'mongodb://')
         }
-        assert(databaseName != null & databaseName.trim() != '', new MongoError(`The database name is required`));
         this.databaseName = databaseName;
         this.options = Object.assign({
             useNewUrlParser: true
         }, options);
-        this.client = new MongoClient(this.url, options);
+        this.client = new MongoClient(this.url, this.options);
         this.database = null;
     }
 
@@ -55,7 +62,9 @@ class MongoDbConnection {
      * Verifies if there is not a current connection and creates
      * one if there is not.
      * 
-     * @returns 
+     * @async
+     * @function connect
+     * @returns Promise<Db>
      */
     async connect() {
         if (!this.database || !this.client.isConnected()) {
