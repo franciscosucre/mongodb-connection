@@ -14,10 +14,10 @@ const {
 class MongoDbConnection {
     /**
      * Creates an instance of MongoLeroyDriver.
-     * @param {String|Object[]} servers An array of objetcs with server information
+     * @param {String|Object[]} servers An array of objetcs with server information or the mongodb uri
      * @param {String} servers[].host
      * @param {Number} servers[].port
-     * @param {String} databaseName Database name
+     * @param {String} databaseName Name of the database to connect.
      * @param {Object} [options] MongoDB client options http://mongodb.github.io/node-mongodb-native/3.1/api/MongoClient.html
      * @param {Boolean} [options.useNewUrlParser=true] Should be placed as true to avoid deprecated warnings
      * @param {String} [options.authSource] The database that holds the authentication information
@@ -51,6 +51,12 @@ class MongoDbConnection {
         this.database = null;
     }
 
+    /**
+     * Verifies if there is not a current connection and creates
+     * one if there is not.
+     * 
+     * @returns 
+     */
     async connect() {
         if (!this.database || !this.client.isConnected()) {
             await this.client.connect()
