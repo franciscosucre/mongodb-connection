@@ -1,5 +1,5 @@
 {
-  "name": "mongodb-connection",
+  "name": "mongodb-connection-simple",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
