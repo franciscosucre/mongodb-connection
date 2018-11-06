@@ -72,6 +72,24 @@ class MongoDbConnection {
         }
         return this.database = this.client.db(this.databaseName);
     }
+
+    /**
+     * Starts a new session on the server. The session can be used to start transactions on 
+     * replica set servers
+     * 
+     * Options: https://mongodb.github.io/node-mongodb-native/3.1/api/global.html#SessionOptions
+     * Transaction Options: https://mongodb.github.io/node-mongodb-native/3.1/api/global.html#TransactionOptions
+     * 
+     * @param {object} [options]
+     * @param {boolean} [options.causalConsistency=true] : Whether causal consistency should be enabled on this session
+     * @param {object} [options.defaultTransactionOptions]
+     * @param {ReadConcern} [options.defaultTransactionOptions.readConcern]
+     * @param {WriteConcern} [options.defaultTransactionOptions.writeConcern]
+     * @param {ReadPreference} [options.defaultTransactionOptions.readPreference]
+     */
+    startSession(options){
+        return this.client.startSession(options)
+    }
 }
 
 
