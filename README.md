@@ -1,4 +1,4 @@
-# **mongodb-connection**
+# **mongodb-connection-simple**
 
 MongoDb Implementation that uses the same connection to save some performance. It is intended to be used as a singleton.
 
